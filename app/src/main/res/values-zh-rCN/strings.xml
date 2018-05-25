@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Newamber(Liu Enbei)
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<resources>
+
+    <!-- Special Char -->
+    <string name="empty_string"> </string>
+    <string name="snack_bar_default_action_text">@string/empty_string</string>
+
+    <!-- Standard Text -->
+    <string name="test">测试本文</string>
+    <string name="media_library">媒体库</string>
+    <string name="folder">文件夹</string>
+    <string name="about">关于</string>
+    <string name="donation">赞助</string>
+    <string name="settings">设置</string>
+    <string name="developing">开发中…</string>
+    <string name="open">打开</string>
+    <string name="close">关闭</string>
+    <string name="search">搜索</string>
+    <string name="shuffle_all">随机播放</string>
+    <string name="grid_size">网格大小</string>
+    <string name="sleep_timer">睡眠定时器</string>
+    <string name="equalizer">均衡器</string>
+    <string name="song">歌曲</string>
+    <string name="album">专辑</string>
+    <string name="artist">艺术家</string>
+    <string name="playlist">播放列表</string>
+
+    <!-- Toolbar menu item special -->
+    <string name="grid_size_1">1</string>
+    <string name="grid_size_2">2</string>
+    <string name="grid_size_3">3</string>
+    <string name="grid_size_4">4</string>
+
+    <string-array name="viewpager_main_title">
+        <item>歌曲</item>
+        <item>专辑</item>
+        <item>歌手</item>
+        <item>播放列表</item>
+    </string-array>
+
+</resources>

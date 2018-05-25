@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Newamber(Liu Enbei)
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<resources>
+    <!--Theme Color-->
+    <color name="colorPrimary">#870d4c</color>
+    <color name="colorPrimaryDark">#5b0e2e</color>
+    <color name="colorAccent">#e57373</color>
+    <color name="colorPrimaryLight">#e26666</color>
+    <color name="colorWindowBg">#fafafa</color>
+
+    <!--Standard Color-->
+    <color name="colorWhite">@android:color/white</color>
+    <color name="colorGray">#424242</color>
+    <color name="colorDivider">#c7c7c7</color>
+    <color name="colorTransparent">@android:color/transparent</color>
+
+    <!--White Text Color-->
+    <color name="colorWhiteDivider">#1fffffff</color>
+    <color name="colorWhiteHintText">#4dffffff</color>
+    <color name="colorWhiteSecondaryText">#b3ffffff</color>
+    <color name="colorWhiteTextOrIcon">@color/colorWhite</color>
+
+
+    <!--Black Text Color-->
+    <color name="colorBlackDivider">#1fffffff</color>
+    <color name="colorBlackHintText">#42000000</color>
+    <color name="colorBlackSecondaryText">#8a000000</color>
+    <color name="colorBlackTextOrIcon">#000000</color>
+
+    <color name="colorGeneralBackground">#f1f1f1</color>
+
+    <!-- Standard Icon Color -->
+    <color name="colorGrayIcon">#6b6b6b</color>
+    <color name="colorTabSelectedIcon">@color/colorWhite</color>
+    <color name="colorTabUnSelectedIcon">#a7e9e9e9</color>
+
+</resources>

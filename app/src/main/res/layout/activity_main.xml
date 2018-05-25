@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2018 Newamber(Liu Enbei)
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
+    tools:context=".mvp.ui.activity.MainActivity">
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/slidingLayoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:fitsSystemWindows="true"
+        sothree:umanoPanelHeight="@dimen/size_action_bar"
+        sothree:umanoParallaxOffset="112dp"
+        sothree:umanoShadowHeight="@dimen/elevation_appbar"
+        sothree:umanoOverlay="false">
+
+        <!-- Main Content -->
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayoutMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBarLayoutMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/elevation_appbar"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbarMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_action_bar"
+                    android:background="@color/colorPrimary"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:title="@string/app_name"
+                    app:layout_scrollFlags="scroll|enterAlways|snap"/>
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tabLayoutMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_normal"
+                    android:background="@color/colorPrimary"
+                    app:tabMode="fixed"
+                    app:tabGravity="fill"
+                    app:tabSelectedTextColor="@color/colorWhiteTextOrIcon"
+                    app:tabIndicatorColor="@color/colorWhite"
+                    app:tabTextColor="@color/colorWhiteSecondaryText"
+                    app:tabIndicatorHeight="@dimen/size_tab_indicator_height"/>
+
+                <android.support.design.widget.BottomNavigationView
+                    android:id="@+id/bottomNavigationView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_action_bar"
+                    android:layout_gravity="start"
+                    app:itemIconTint="@color/list_color_tab_main"
+                    app:itemTextColor="@color/list_color_tab_main"
+                    app:menu="@menu/menu_tabs_main"/>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPagerMain"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="@dimen/elevation_none"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <!-- Sliding Up Content -->
+        <FrameLayout
+            android:id="@+id/containerPlaybackMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWindowBg"
+            android:fitsSystemWindows="true"/>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:elevation="@dimen/elevation_navigation"
+        app:itemTextColor="@color/colorBlackTextOrIcon"
+        app:menu="@menu/menu_navigation"
+        app:headerLayout="@layout/navigation_header" />
+
+</android.support.v4.widget.DrawerLayout>
+

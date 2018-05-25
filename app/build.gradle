@@ -1,0 +1,119 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 Newamber(Liu Enbei)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    defaultConfig {
+        resValue "string", "app_name", "Amber Music"
+        applicationId rootProject.ext.android.applicationId
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            resValue "string", "app_name", "Amber Music Dev"
+            minifyEnabled false
+            zipAlignEnabled true
+            applicationIdSuffix ".dev"
+        }
+    }
+    androidExtensions {
+        experimental = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // kotlin annotation Processor tool
+    kapt rootProject.ext.dependencies["dagger_kapt"]
+    kapt rootProject.ext.dependencies["dagger_android_kapt"]
+    kapt rootProject.ext.dependencies["glide_kapt"]
+    kapt rootProject.ext.dependencies["apollo_kapt"]
+
+    // kotlin
+    implementation rootProject.ext.dependencies["kotlin_stdlib"]
+    implementation rootProject.ext.dependencies["kotlin_reflect"]
+
+    // dagger
+    implementation rootProject.ext.dependencies["dagger2"]
+    implementation rootProject.ext.dependencies["dagger2_android"]
+    implementation rootProject.ext.dependencies["dagger2_android_support"]
+
+    // glide
+    implementation rootProject.ext.dependencies["glide"]
+
+    // rx
+    implementation rootProject.ext.dependencies["rxkotlin"]
+    implementation rootProject.ext.dependencies["rxandroid"]
+
+    // retrofit
+    implementation rootProject.ext.dependencies["retrofit"]
+    implementation rootProject.ext.dependencies["retrofit-gson"]
+    implementation rootProject.ext.dependencies["retrofit-rxjava2"]
+
+    // other
+    implementation rootProject.ext.dependencies["logger"]
+    implementation rootProject.ext.dependencies["light"]
+    implementation rootProject.ext.dependencies["sliding_panel"]
+    implementation rootProject.ext.dependencies["fast_recyclerview"]
+    implementation rootProject.ext.dependencies["apollo"]
+
+
+    // android support
+    implementation rootProject.ext.dependencies["design"]
+    implementation rootProject.ext.dependencies["cardview-v7"]
+    implementation rootProject.ext.dependencies["palette-v7"]
+    implementation rootProject.ext.dependencies["appcompat-v7"]
+    implementation rootProject.ext.dependencies["recyclerview-v7"]
+    implementation rootProject.ext.dependencies["dynamic_animation"]
+    implementation rootProject.ext.dependencies["constraint_layout"]
+
+    // test
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
