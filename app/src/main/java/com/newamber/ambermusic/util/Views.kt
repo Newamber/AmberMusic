@@ -28,6 +28,7 @@ import android.animation.AnimatorInflater
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.drawable.ColorDrawable
 import android.support.annotation.AnimatorRes
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
@@ -113,6 +114,29 @@ fun View.makeGradualColor(
     }
 }
 
+fun View.makeGradualColor(
+    @ColorRes colorToId: Int,
+    duration: Long = GENERAL_ANIMATION_DURATION,
+    delay: Long = 0,
+    interpolator: Interpolator = LinearInterpolator()
+) {
+    with(ValueAnimator.ofArgb((background as ColorDrawable).color, findColor(colorToId))) {
+        setDuration(duration)
+        this@with.interpolator = interpolator
+        startDelay = delay
+        start()
+        addUpdateListener {
+            val view = this@makeGradualColor
+            val color = it.animatedValue as Int
+            if (view is CardView) {
+                view.setCardBackgroundColor(color)
+            } else {
+                view.setBackgroundColor(color)
+            }
+        }
+    }
+}
+
 /**
  * The same usage with [View.makeGradualColor].
  *
@@ -126,6 +150,23 @@ fun TextView.makeGradualTextColor(
     interpolator: Interpolator = LinearInterpolator()
 ) {
     with(ValueAnimator.ofArgb(findColor(colorFromId), findColor(colorToId))) {
+        setDuration(duration)
+        this@with.interpolator = interpolator
+        startDelay = delay
+        start()
+        addUpdateListener {
+            this@makeGradualTextColor.setTextColor(it.animatedValue as Int)
+        }
+    }
+}
+
+fun TextView.makeGradualTextColor(
+    @ColorRes colorToId: Int,
+    duration: Long = GENERAL_ANIMATION_DURATION,
+    delay: Long = 0,
+    interpolator: Interpolator = LinearInterpolator()
+) {
+    with(ValueAnimator.ofArgb((background as ColorDrawable).color, findColor(colorToId))) {
         setDuration(duration)
         this@with.interpolator = interpolator
         startDelay = delay
@@ -158,7 +199,3 @@ fun startAnimators(@AnimatorRes animId: Int, vararg views: View, delay: Long = 0
 fun ImageView.load(@DrawableRes drawableId: Int, activity: Activity) {
     Glide.with(activity).load(drawableId).into(this)
 }
-
-
-
-

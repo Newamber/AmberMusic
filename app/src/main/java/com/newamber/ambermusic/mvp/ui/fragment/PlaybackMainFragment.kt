@@ -48,13 +48,12 @@ class PlaybackMainFragment :
     PlaybackMainContract.View {
 
     private var isPlaying = false
+    override var enableRxBus = true
 
     @Inject
     override lateinit var presenter: PlaybackMainContract.Presenter
 
     override fun getLayoutId() = R.layout.fragment_drag_playback
-
-    override fun enableRxBus() = true
 
     override fun initView() {
         (activity as MainActivity).slidingLayoutMain.addPanelSlideListener(object :
@@ -63,7 +62,7 @@ class PlaybackMainFragment :
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
                 with(imageViewPlayerArtworkMain) {
                     alpha = slideOffset
-                    isVisible = slideOffset != 0f
+                    isVisible = (slideOffset != 0f)
                 }
             }
 
@@ -78,9 +77,9 @@ class PlaybackMainFragment :
 
     }
 
-    override fun initListeners() {
-        setOnClickListeners(buttonPlayMain, fabPlayMain, buttonNextSongMain, buttonPreSongMain)
-    }
+    override fun getOnClickView() = arrayOf<View>(
+        buttonPlayMain, fabPlayMain, buttonNextSongMain, buttonPreSongMain
+    )
 
     override fun processClickEvent(viewId: Int) {
         when (viewId) {
@@ -118,7 +117,6 @@ class PlaybackMainFragment :
 //        setImage(fabPlayMain, R.drawable.ic_pause)
 //        seekBarMain.max = song.duration.toInt()
 //    }
-
 
     @Receive("event_update_ui_playback_fragment")
     fun onEventUpdateUI(song: Song) {

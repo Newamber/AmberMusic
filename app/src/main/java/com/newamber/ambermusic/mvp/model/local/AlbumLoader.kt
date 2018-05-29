@@ -27,12 +27,12 @@ package com.newamber.ambermusic.mvp.model.local
 import android.content.ContentUris
 import android.database.Cursor
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.MediaStore.Audio.Albums
 import com.newamber.ambermusic.AmberMusic
 import com.newamber.ambermusic.constants.EMPTY_STRING
 import com.newamber.ambermusic.util.toUri
 import io.reactivex.Observable
-
 
 /**
  * Created by Newamber(newamber@live.cn) on 2018/5/13.
@@ -44,26 +44,29 @@ object AlbumLoader {
         Albums.ALBUM,             // 1
         Albums.NUMBER_OF_SONGS,   // 2
         Albums.FIRST_YEAR,        // 3
-        Albums.ARTIST,            // 4
-        Albums.ALBUM_ART          // NOTE: Do not use this column or lead to ANR!
+        Albums.ARTIST             // 4
     )
 
     fun getAllAlbums() = getAlbums(makeAlbumCursor())
 
-    fun getAlbum(cursor: Cursor?): Observable<Album> = Observable.create {
-        var album = Album.EMPTY_ALBUM
-        cursor?.apply {
-            if (moveToFirst()) album = getAlbum(this)
-            close()
-        }
-        it.onNext(album)
-        it.onComplete()
-    }
+//    fun getAlbum(cursor: Cursor?): Observable<Album> = Observable.create {
+//        var album = Album.EMPTY_ALBUM
+//        cursor?.apply {
+//            if (moveToFirst()) album = getAlbum(this)
+//            close()
+//        }
+//        it.onNext(album)
+//        it.onComplete()
+//    }
 
-    fun getAlbumArtwork(albumId: Int): Uri = ContentUris
-        .withAppendedId("content://media/external/audio/albumart".toUri(), albumId.toLong())
+    fun getAlbums(artistId: Long) = getAlbums(
+        makeAlbumCursor("${MediaStore.Audio.AudioColumns.ARTIST_ID} = ?", arrayOf("$artistId"))
+    )
 
+    fun getAlbumArtwork(albumId: Long): Uri = ContentUris
+        .withAppendedId("content://media/external/audio/albumart".toUri(), albumId)
 
+    // ---------------------------------------private-----------------------------------------------
     private fun getAlbums(cursor: Cursor?): Observable<MutableList<Album>> = Observable.create {
         val albums = mutableListOf<Album>()
         cursor?.use {
@@ -78,7 +81,7 @@ object AlbumLoader {
     }
 
     private fun getAlbum(cursor: Cursor) = Album(
-        cursor.getInt(0),      // album id
+        cursor.getLong(0),     // album id
         cursor.getString(1),   // album name
         cursor.getInt(2),      // song count
         cursor.getInt(3),      // year(earliest)

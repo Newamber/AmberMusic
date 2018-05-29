@@ -28,9 +28,4 @@ package com.newamber.ambermusic.mvp.model.local
  * Description: .
  * Created by Newamber(newamber@live.cn) on 2018/5/14.
  */
-object PlaylistLoader {
-
-
-
-
-}
+object PlaylistLoader

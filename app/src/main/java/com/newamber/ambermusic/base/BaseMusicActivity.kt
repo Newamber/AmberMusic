@@ -24,44 +24,11 @@
 
 package com.newamber.ambermusic.base
 
-import android.net.Uri
-import com.newamber.ambermusic.mvp.model.local.Album
-import com.newamber.ambermusic.mvp.model.local.Artist
-import com.newamber.ambermusic.mvp.model.local.Song
-import com.newamber.ambermusic.mvp.model.remote.LastFMAlbum
-import com.newamber.ambermusic.mvp.model.remote.LastFMArtist
-import io.reactivex.Observable
-
 /**
  * Description: .
  *
- * Created by Newamber(newamber@live.cn) on 2018/5/19.
+ * Created by Newamber(newamber@live.cn) on 2018/5/29.
  */
-interface BaseRepository {
+abstract class BaseMusicActivity<V : BaseView, P : BasePresenter<V>> : BaseActivity<V, P>() {
 
-    fun getAllSongs(): Observable<MutableList<Song>>
-
-    fun getSongsByAlbum(albumId: Long): Observable<MutableList<Song>>
-
-    fun getSongsByArtist(artistId: Long): Observable<MutableList<Song>>
-
-    fun getAllAlbums(): Observable<MutableList<Album>>
-
-    fun getAlbumsByArtist(artistId: Long): Observable<MutableList<Album>>
-
-    fun getAllArtists(): Observable<MutableList<Artist>>
-
-    fun getArtistInfo(artistName: String, language: String?): Observable<LastFMArtist>
-
-    fun getAlbumInfo(
-        albumName: String,
-        artistName: String,
-        language: String?
-    ): Observable<LastFMAlbum>
-
-    fun getLocalAlbumArtwork(song: Song): Uri
-
-    fun getLocalAlbumArtwork(album: Album): Uri
-
-    //fun getNetArtistArtwork(artist: Artist): String
 }

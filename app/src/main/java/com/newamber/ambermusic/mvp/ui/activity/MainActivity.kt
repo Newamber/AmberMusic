@@ -67,6 +67,7 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
 
     @Inject
     override lateinit var presenter: MainContract.Presenter
+    override var enableRxBus = true
 
     private val player by lazy { MediaPlayer() }
 
@@ -83,8 +84,6 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
     override fun getLayoutId() = R.layout.activity_main
 
     override fun getMenuId() = R.menu.menu_toolbar_main
-
-    override fun enableRxBus() = true
 
     override fun processMenuItemClickEvent(itemId: Int?) {
         when (itemId) {
@@ -110,14 +109,7 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
                 it.setHomeButtonEnabled(true)
             }
             title = getString(string.app_name)
-            with(
-                ActionBarDrawerToggle(
-                    this@MainActivity,
-                    drawerLayout,
-                    this,
-                    string.open,
-                    string.close
-                )
+            with(ActionBarDrawerToggle(this@MainActivity, drawerLayout, this, string.open, string.close)
             ) {
                 syncState()
                 drawerLayout.addDrawerListener(this)

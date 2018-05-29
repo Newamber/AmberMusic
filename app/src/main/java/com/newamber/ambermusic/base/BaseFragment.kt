@@ -46,6 +46,8 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
     View.OnClickListener {
 
     protected abstract var presenter: P
+    protected open var enableRxBus = false
+
     private var rootView: View? = null
     private var isVisibleToUser = false
     private var isViewCreated = false
@@ -79,19 +81,19 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (enableRxBus()) rxBinder = Apollo.bind(this)
+        if (enableRxBus) rxBinder = Apollo.bind(this)
         isViewCreated = true
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        initListeners()
+        setOnClickListeners(*getOnClickView())
         lazyInit()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (enableRxBus()) {
+        if (enableRxBus) {
             rxBinder?.unbind()
             rxBinder = null
         }
@@ -111,9 +113,9 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
 
     protected open fun initData() {}
 
-    protected open fun processClickEvent(@IdRes viewId: Int) {}
+    protected open fun getOnClickView() = arrayOf<View>()
 
-    protected open fun initListeners() {}
+    protected open fun processClickEvent(@IdRes viewId: Int) {}
 
     protected open fun enableRxBus() = false
 
@@ -125,10 +127,6 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
         Glide.with(this).load(resId).into(view)
     }
 
-    protected fun setOnClickListeners(vararg views: View) {
-        views.forEach { it.setOnClickListener(this) }
-    }
-
     final override fun onClick(v: View) = processClickEvent(v.id)
 
     // -----------------------------------------private---------------------------------------------
@@ -137,6 +135,10 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
             isDataInitialized = true
             initData()
         }
+    }
+
+    private fun setOnClickListeners(vararg views: View) {
+        views.forEach { it.setOnClickListener(this) }
     }
 
 }

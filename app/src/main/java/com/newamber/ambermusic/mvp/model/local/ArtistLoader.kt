@@ -46,7 +46,8 @@ object ArtistLoader {
 
     fun getAllArtists() = getArtists(makeArtistCursor())
 
-    fun getArtists(cursor: Cursor?): Observable<MutableList<Artist>> = Observable.create {
+    // ---------------------------------------private-----------------------------------------------
+    private fun getArtists(cursor: Cursor?): Observable<MutableList<Artist>> = Observable.create {
         val artists = mutableListOf<Artist>()
         cursor?.use {
             if (it.moveToFirst()) {
@@ -59,10 +60,8 @@ object ArtistLoader {
         it.onComplete()
     }
 
-    fun getArtistArtwork() {}
-
     private fun getArtist(cursor: Cursor) = Artist(
-        cursor.getInt(0),      // artist id
+        cursor.getLong(0),     // artist id
         cursor.getString(1),   // artist name
         cursor.getInt(2),      // album number of this artist
         cursor.getInt(3)       // song number of this artist

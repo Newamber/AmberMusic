@@ -26,6 +26,7 @@ package com.newamber.ambermusic.mvp.model.local
 
 import android.content.ContentUris
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.AudioColumns
 import android.provider.MediaStore.Audio.Media
@@ -58,17 +59,26 @@ object SongLoader {
 
     fun getAllSongs() = getSongs(makeSongCursor())
 
-    fun getSongs(query: String) = getSongs(
-        makeSongCursor(
-            "${AudioColumns.TITLE} LIKE ?",
-            arrayOf("%$query%")
-        )
+//    fun getSongs(query: String) = getSongs(
+//        makeSongCursor(
+//            "${AudioColumns.TITLE} LIKE ?",
+//            arrayOf("%$query%")
+//        )
+//    )
+
+    fun getSongsByAlbum(albumId: Long) = getSongs(
+        makeSongCursor("${AudioColumns.ALBUM_ID} = ?", arrayOf("$albumId"))
     )
 
-    fun getSongUri(songId: Int) =
-        ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId.toLong())
+    fun getSongsByArtist(artistId: Long) = getSongs(
+        makeSongCursor("${AudioColumns.ARTIST_ID} = ?", arrayOf("$artistId"))
+    )
 
-    fun getSongs(cursor: Cursor?): Observable<MutableList<Song>> = Observable.create {
+    fun getSongUri(songId: Long): Uri = ContentUris
+        .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId.toLong())
+
+    // ---------------------------------------private-----------------------------------------------
+    private fun getSongs(cursor: Cursor?): Observable<MutableList<Song>> = Observable.create {
         val songs = mutableListOf<Song>()
         cursor?.use {
             if (it.moveToFirst()) {
@@ -81,14 +91,7 @@ object SongLoader {
         it.onComplete()
     }
 
-    fun getSong(queryId: Int) = getSong(
-        makeSongCursor(
-            "${AudioColumns._ID} = ?",
-            arrayOf("$queryId")
-        )
-    )
-
-    fun getSong(cursor: Cursor?): Observable<Song> = Observable.create {
+    private fun getSong(cursor: Cursor?): Observable<Song> = Observable.create {
         var song = Song.EMPTY_SONG
         cursor?.apply {
             if (moveToFirst()) song = getSong(this)
@@ -98,9 +101,8 @@ object SongLoader {
         it.onComplete()
     }
 
-    // ---------------------------------------private-----------------------------------------------
     private fun getSong(cursor: Cursor) = Song(
-        cursor.getInt(0),     // id
+        cursor.getLong(0),    // id
         cursor.getString(1),  // title
         cursor.getInt(2),     // track number
         cursor.getInt(3),     // year
@@ -108,9 +110,9 @@ object SongLoader {
         cursor.getString(5),  // path
         cursor.getLong(6),    // size
         cursor.getLong(7),    // date modified
-        cursor.getInt(8),     // album id
+        cursor.getLong(8),    // album id
         cursor.getString(9),  // album name
-        cursor.getInt(10),    // artist id
+        cursor.getLong(10),   // artist id
         cursor.getString(11), // artist name
         cursor.getString(12)  // mime type
     )

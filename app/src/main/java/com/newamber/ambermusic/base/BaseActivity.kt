@@ -47,6 +47,7 @@ abstract class BaseActivity<V : BaseView, P : BasePresenter<V>> : DaggerAppCompa
     View.OnClickListener {
 
     protected abstract var presenter: P
+    protected open var enableRxBus = false
     private var rxBinder: ApolloBinder? = null
 
     // lifecycle method
@@ -56,7 +57,7 @@ abstract class BaseActivity<V : BaseView, P : BasePresenter<V>> : DaggerAppCompa
         setContentView(getLayoutId())
         ActivityController.addCurrent(this)
         presenter.attachView(this as V)
-        if (enableRxBus()) rxBinder = Apollo.bind(this)
+        if (enableRxBus) rxBinder = Apollo.bind(this)
         initView()
     }
 
@@ -64,7 +65,7 @@ abstract class BaseActivity<V : BaseView, P : BasePresenter<V>> : DaggerAppCompa
         super.onDestroy()
         presenter.detachView()
         ActivityController.removeCurrent()
-        if (enableRxBus()) {
+        if (enableRxBus) {
             rxBinder?.unbind()
             rxBinder = null
         }
@@ -82,8 +83,6 @@ abstract class BaseActivity<V : BaseView, P : BasePresenter<V>> : DaggerAppCompa
     protected open fun processClickEvent(@IdRes viewId: Int) {}
 
     protected open fun processMenuItemClickEvent(@IdRes itemId: Int?) {}
-
-    protected open fun enableRxBus() = false
 
     protected fun setOnClickListeners(vararg views: View) {
         views.forEach { it.setOnClickListener(this) }

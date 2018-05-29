@@ -33,7 +33,7 @@ import com.newamber.ambermusic.constants.EMPTY_STRING
  */
 @Suppress("MemberVisibilityCanBePrivate")
 data class Song(
-    val id: Int,
+    val id: Long,
     val title: String,
     val trackNumber: Int,
     val year: Int,
@@ -41,15 +41,15 @@ data class Song(
     val path: String,
     val size: Long,
     val dateModified: Long,
-    val albumId: Int,
+    val albumId: Long,
     val albumName: String,
-    val artistId: Int,
+    val artistId: Long,
     val artistName: String,
     val mimeType: String
 ) {
     companion object {
         val EMPTY_SONG = Song(
-            -1,
+            -1L,
             EMPTY_STRING,
             -1,
             -1,
@@ -59,7 +59,7 @@ data class Song(
             -1L,
             -1,
             EMPTY_STRING,
-            -1,
+            -1L,
             EMPTY_STRING,
             EMPTY_STRING
         )
@@ -67,29 +67,29 @@ data class Song(
 }
 
 data class Album(
-    val id: Int,
+    val id: Long,
     val name: String,
     val songCount: Int,
     val year: Int,
     val artistName: String
 ) {
 
-    companion object {
-        val EMPTY_ALBUM = Album(
-            -1, EMPTY_STRING, -1, -1, EMPTY_STRING
-        )
-    }
+//    companion object {
+//        val EMPTY_ALBUM = Album(
+//            -1L, EMPTY_STRING, -1, -1, EMPTY_STRING
+//        )
+//    }
 }
 
 data class Artist(
-    val id: Int,
+    val id: Long,
     val name: String,
     val albumCount: Int,
     val songCount: Int
 ) {
-    companion object {
-        val EMPTY_ARTIST = Artist(-1, EMPTY_STRING, -1, -1)
-    }
+//    companion object {
+//        val EMPTY_ARTIST = Artist(-1L, EMPTY_STRING, -1, -1)
+//    }
 }
 
 data class Playlist(
@@ -97,7 +97,7 @@ data class Playlist(
     val name: String,
     val songCount: Int
 ) {
-    companion object {
-        val EMPTY_PLAYLIST = Playlist(-1, EMPTY_STRING, -1)
-    }
+//    companion object {
+//        val EMPTY_PLAYLIST = Playlist(-1, EMPTY_STRING, -1)
+//    }
 }

@@ -45,9 +45,18 @@ class AmberRepository : BaseRepository {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
+    override fun getSongsByAlbum(albumId: Long): Observable<MutableList<Song>> = SongLoader
+        .getSongsByAlbum(albumId)
+
+    override fun getSongsByArtist(artistId: Long): Observable<MutableList<Song>> = SongLoader
+        .getSongsByArtist(artistId)
+
     override fun getAllAlbums(): Observable<MutableList<Album>> = AlbumLoader.getAllAlbums()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
+
+    override fun getAlbumsByArtist(artistId: Long): Observable<MutableList<Album>> = AlbumLoader
+        .getAlbums(artistId)
 
     override fun getAllArtists(): Observable<MutableList<Artist>> = ArtistLoader.getAllArtists()
         .subscribeOn(Schedulers.io())
