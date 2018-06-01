@@ -25,13 +25,17 @@
 package com.newamber.ambermusic.mvp.ui.fragment
 
 import android.view.View
+import android.widget.SeekBar
 import com.lsxiao.apollo.core.annotations.Receive
+import com.lsxiao.apollo.core.annotations.Sticky
 import com.newamber.ambermusic.R
 import com.newamber.ambermusic.base.BaseFragment
 import com.newamber.ambermusic.mvp.contract.PlaybackMainContract
 import com.newamber.ambermusic.mvp.model.local.Song
 import com.newamber.ambermusic.mvp.ui.activity.MainActivity
+import com.newamber.ambermusic.util.logDebug
 import com.newamber.ambermusic.util.post
+import com.newamber.ambermusic.util.toMinuteSecond
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import isVisible
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,7 +43,7 @@ import kotlinx.android.synthetic.main.fragment_drag_playback.*
 import javax.inject.Inject
 
 /**
- * Description: .
+ * Description: Playback Fragment.
  *
  * Created by Newamber(newamber@live.cn) on 2018/5/16.
  */
@@ -47,8 +51,10 @@ class PlaybackMainFragment :
     BaseFragment<PlaybackMainContract.View, PlaybackMainContract.Presenter>(),
     PlaybackMainContract.View {
 
-    private var isPlaying = false
     override var enableRxBus = true
+
+    private var isPlaying = false
+    private var updateProgressFromUser = false
 
     @Inject
     override lateinit var presenter: PlaybackMainContract.Presenter
@@ -58,7 +64,6 @@ class PlaybackMainFragment :
     override fun initView() {
         (activity as MainActivity).slidingLayoutMain.addPanelSlideListener(object :
             SlidingUpPanelLayout.PanelSlideListener {
-
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
                 with(imageViewPlayerArtworkMain) {
                     alpha = slideOffset
@@ -74,12 +79,28 @@ class PlaybackMainFragment :
 
             }
         })
-
     }
 
-    override fun getOnClickView() = arrayOf<View>(
-        buttonPlayMain, fabPlayMain, buttonNextSongMain, buttonPreSongMain
-    )
+    override fun setMultiListener() {
+        super.setMultiListener()
+        setOnClickListeners(buttonPlayMain, fabPlayMain, buttonNextSongMain, buttonPreSongMain)
+        seekBarMain.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                updateProgressFromUser = fromUser
+                textViewCurrentTime.text = progress.toMinuteSecond()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.apply {
+                    post("event_update_audio_progress", progress)
+                    progressBarMain.progress = progress
+                }
+                updateProgressFromUser = false
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+        })
+    }
 
     override fun processClickEvent(viewId: Int) {
         when (viewId) {
@@ -89,6 +110,7 @@ class PlaybackMainFragment :
                     setPauseButton()
                     isPlaying = true
                 }
+                restProgressAndTime()
             }
             R.id.buttonPreSongMain -> {
                 post("event_play_pre_song_main_activity")
@@ -96,39 +118,58 @@ class PlaybackMainFragment :
                     setPauseButton()
                     isPlaying = true
                 }
+                restProgressAndTime()
             }
-            R.id.buttonPlayMain -> {
-                clickPlayButton()
-            }
-            R.id.fabPlayMain -> {
-                clickPlayButton()
+            R.id.buttonPlayMain -> clickPlayButton()
+            R.id.fabPlayMain -> clickPlayButton()
+        }
+    }
+
+    @Receive("event_init_last_play_state")
+    @Sticky
+    fun onEventInitLastPlayState(array: Array<Any>) {
+        logDebug("init")
+        val song = array[0] as Song
+        val progress = array[1] as Int
+        with(song) {
+            if (song != Song.EMPTY_SONG) {
+                textViewTitleMiniMain.text = title
+                setImage(imageViewPlayerArtworkMain, presenter.getArtwork(this))
+                textViewTitleMain.text = title
+                textViewArtistMain.text = artistName
+                progressBarMain.max = duration.toInt()
+                progressBarMain.progress = progress
+                seekBarMain.max = duration.toInt()
+                seekBarMain.progress = progress
+                textViewCurrentTime.text = progress.toMinuteSecond()
+                textViewSongDuration.text = duration.toInt().toMinuteSecond()
             }
         }
     }
 
-//    // event method
-//    @Receive("event_play_song_to_playback_fragment")
-//    fun onEventGetPlayingSong(song: Song) {
-//        textViewTitleMiniMain.text = song.title
-//        setImage(buttonPlayMain, R.drawable.ic_pause)
-//        setImage(imageViewPlayerArtworkMain, presenter.getArtwork(song))
-//        textViewTitleMain.text = song.title
-//        textViewArtistMain.text = song.artistName
-//        setImage(fabPlayMain, R.drawable.ic_pause)
-//        seekBarMain.max = song.duration.toInt()
-//    }
-
     @Receive("event_update_ui_playback_fragment")
     fun onEventUpdateUI(song: Song) {
         isPlaying = true
-        textViewTitleMiniMain.text = song.title
-        setImage(buttonPlayMain, R.drawable.ic_pause)
-        setImage(imageViewPlayerArtworkMain, presenter.getArtwork(song))
-        textViewTitleMain.text = song.title
-        textViewArtistMain.text = song.artistName
-        setImage(fabPlayMain, R.drawable.ic_pause)
-        //seekBarMain.max = song.duration.toInt()
-        //progressBarMain.max = song.duration.toInt()
+        with(song) {
+            textViewTitleMiniMain.text = title
+            setImage(imageViewPlayerArtworkMain, presenter.getArtwork(song))
+            textViewTitleMain.text = title
+            textViewArtistMain.text = artistName
+            setPauseButton()
+            progressBarMain.max = duration.toInt()
+            seekBarMain.max = duration.toInt()
+            restProgressAndTime()
+            textViewSongDuration.text = duration.toInt().toMinuteSecond()
+        }
+    }
+
+    @Receive("event_update_progress")
+    fun onEventUpdateProgress(progress: Int) {
+        if (!updateProgressFromUser) {
+            progressBarMain.progress = progress
+            seekBarMain.progress = progress
+            textViewCurrentTime.text = progress.toMinuteSecond()
+        }
     }
 
     private fun clickPlayButton() {
@@ -151,5 +192,12 @@ class PlaybackMainFragment :
     private fun setPauseButton() {
         setImage(buttonPlayMain, R.drawable.ic_pause)
         setImage(fabPlayMain, R.drawable.ic_pause)
+    }
+
+    private fun restProgressAndTime() {
+        val progress = 0
+        progressBarMain.progress = progress
+        seekBarMain.progress = progress
+        textViewCurrentTime.text = progress.toMinuteSecond()
     }
 }

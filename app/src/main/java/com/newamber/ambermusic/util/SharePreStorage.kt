@@ -28,6 +28,9 @@ import android.content.Context
 import com.newamber.ambermusic.AmberMusic
 import com.newamber.ambermusic.constants.SHARE_PREFERENCE_DEFAULT_STRING_VALUE
 import com.newamber.ambermusic.constants.SHARE_PREFERENCE_FILE_NAME
+import com.newamber.ambermusic.constants.SP_LAST_PLAYED_PROGRESS
+import com.newamber.ambermusic.constants.SP_LAST_PLAYED_SONG
+import com.newamber.ambermusic.mvp.model.local.SongLoader
 
 /**
  * Description: .
@@ -44,6 +47,14 @@ object SharePreStorage {
     }
 
     private val editor = sp.edit()
+
+    fun saveLastPlayedSongId(songId: Long) = put(SP_LAST_PLAYED_SONG, songId)
+
+    fun getLastPlayedSongId() = getLong(SP_LAST_PLAYED_SONG, SongLoader.getFirstSongId())
+
+    fun saveLastPlayedProgress(progress: Int) = put(SP_LAST_PLAYED_PROGRESS, progress)
+
+    fun getLastPlayedProgress() = getInt(SP_LAST_PLAYED_PROGRESS)
 
     // setter
     fun put(key: String, value: Int) = editor.putInt(key, value).apply()
@@ -79,6 +90,5 @@ object SharePreStorage {
     fun remove(key: String) = editor.remove(key).apply()
 
     fun clear() = editor.clear().apply()
-
 
 }

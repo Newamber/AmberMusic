@@ -61,8 +61,7 @@ class SongFragment : BaseFragment<SongContract.View, SongContract.Presenter>(),
         }
         presenter.refreshSongsBy(songAdapter)
         songAdapter.setOnClickListener { _, song, _ ->
-            post("event_play_song_main_activity", listOf(song, songAdapter.getEntityList()))
-            //successBar(recyclerViewFSong, "发送")
+            post("event_play_song_main_activity", arrayOf(song, songAdapter.getEntityList()))
         }
     }
 

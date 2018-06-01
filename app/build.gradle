@@ -85,6 +85,7 @@ dependencies {
 
     // glide
     implementation rootProject.ext.dependencies["glide"]
+    implementation rootProject.ext.dependencies["glidepalette"]
 
     // rx
     implementation rootProject.ext.dependencies["rxkotlin"]
@@ -102,11 +103,10 @@ dependencies {
     implementation rootProject.ext.dependencies["fast_recyclerview"]
     implementation rootProject.ext.dependencies["apollo"]
 
-
     // android support
     implementation rootProject.ext.dependencies["design"]
     implementation rootProject.ext.dependencies["cardview-v7"]
-    implementation rootProject.ext.dependencies["palette-v7"]
+    //implementation rootProject.ext.dependencies["palette-v7"]
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["recyclerview-v7"]
     implementation rootProject.ext.dependencies["dynamic_animation"]

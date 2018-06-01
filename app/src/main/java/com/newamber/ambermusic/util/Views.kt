@@ -26,22 +26,23 @@
 
 import android.animation.AnimatorInflater
 import android.animation.ValueAnimator
-import android.app.Activity
-import android.graphics.Bitmap
+import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
 import android.support.annotation.AnimatorRes
+import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
+import android.support.design.internal.BottomNavigationItemView
+import android.support.design.internal.BottomNavigationMenuView
+import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.CardView
 import android.view.View
 import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
-import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
 import com.newamber.ambermusic.AmberMusic
 import com.newamber.ambermusic.constants.GENERAL_ANIMATION_DURATION
 import com.newamber.ambermusic.util.findColor
+import com.newamber.ambermusic.util.logDebug
 
 fun View.startAnimator(@AnimatorRes id: Int, delay: Long = 0) {
     with(AnimatorInflater.loadAnimator(AmberMusic.APP, id)) {
@@ -115,12 +116,12 @@ fun View.makeGradualColor(
 }
 
 fun View.makeGradualColor(
-    @ColorRes colorToId: Int,
+    @ColorInt colorTo: Int,
     duration: Long = GENERAL_ANIMATION_DURATION,
-    delay: Long = 0,
+    delay: Long = 0L,
     interpolator: Interpolator = LinearInterpolator()
 ) {
-    with(ValueAnimator.ofArgb((background as ColorDrawable).color, findColor(colorToId))) {
+    with(ValueAnimator.ofArgb((background as ColorDrawable).color, colorTo)) {
         setDuration(duration)
         this@with.interpolator = interpolator
         startDelay = delay
@@ -146,7 +147,7 @@ fun TextView.makeGradualTextColor(
     @ColorRes colorFromId: Int,
     @ColorRes colorToId: Int,
     duration: Long = GENERAL_ANIMATION_DURATION,
-    delay: Long = 0,
+    delay: Long = 0L,
     interpolator: Interpolator = LinearInterpolator()
 ) {
     with(ValueAnimator.ofArgb(findColor(colorFromId), findColor(colorToId))) {
@@ -163,7 +164,7 @@ fun TextView.makeGradualTextColor(
 fun TextView.makeGradualTextColor(
     @ColorRes colorToId: Int,
     duration: Long = GENERAL_ANIMATION_DURATION,
-    delay: Long = 0,
+    delay: Long = 0L,
     interpolator: Interpolator = LinearInterpolator()
 ) {
     with(ValueAnimator.ofArgb((background as ColorDrawable).color, findColor(colorToId))) {
@@ -177,10 +178,33 @@ fun TextView.makeGradualTextColor(
     }
 }
 
-fun ImageView.toBitmap(): Bitmap {
-    isDrawingCacheEnabled = true
-    buildDrawingCache(true)
-    return drawingCache
+//fun ImageView.toBitmap(): Bitmap {
+//    isDrawingCacheEnabled = true
+//    buildDrawingCache(true)
+//    return drawingCache
+//}
+
+
+@SuppressLint("RestrictedApi")
+fun BottomNavigationView.disableShiftMode() {
+    val bottomView = this.getChildAt(0) as BottomNavigationMenuView
+    try {
+        val shiftingMode = bottomView.javaClass.getDeclaredField("mShiftingMode")
+        shiftingMode.isAccessible = true
+        shiftingMode.setBoolean(bottomView, false)
+        shiftingMode.isAccessible = false
+        for (i in 0 until bottomView.childCount) {
+            val item = bottomView.getChildAt(i) as BottomNavigationItemView
+            item.setShiftingMode(false)
+            // set once again checked value, so view will be updated
+            item.setChecked(item.itemData.isChecked)
+        }
+    } catch (e: NoSuchFieldException) {
+        logDebug(e)
+    } catch (e: IllegalAccessException) {
+        logDebug(e)
+    }
+
 }
 
 /**
@@ -196,6 +220,6 @@ fun startAnimators(@AnimatorRes animId: Int, vararg views: View, delay: Long = 0
     views.forEach { it.startAnimator(animId, delay) }
 }
 
-fun ImageView.load(@DrawableRes drawableId: Int, activity: Activity) {
-    Glide.with(activity).load(drawableId).into(this)
-}
+//fun ImageView.load(@DrawableRes drawableId: Int, activity: Activity) {
+//    Glide.with(activity).load(drawableId).into(this)
+//}

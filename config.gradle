@@ -36,6 +36,7 @@ def sliding_panel_version = "3.4.0"
 def fast_recyclerview_version = "1.0.18"
 def retrofit_version = "2.4.0"
 def apollo_version = "1.0.1-fix"
+def glidepalette_version = "2.1.2"
 
 ext {
     android = [
@@ -70,11 +71,12 @@ ext {
             "retrofit-gson"          : "com.squareup.retrofit2:converter-gson:$retrofit_version",
             "retrofit-rxjava2"       : "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version",
             "apollo"                 : "com.github.lsxiao.Apollo:core:$apollo_version",
+            "glidepalette"           : "com.github.florent37:glidepalette:$glidepalette_version",
 
             // support libs
             "design"           : "com.android.support:design:$support_libVersion",
             "cardview-v7"      : "com.android.support:cardview-v7:$support_libVersion",
-            "palette-v7"       : "com.android.support:palette-v7:$support_libVersion",
+            //"palette-v7"       : "com.android.support:palette-v7:$support_libVersion",
             "appcompat-v7"     : "com.android.support:appcompat-v7:$support_libVersion",
             "recyclerview-v7"  : "com.android.support:recyclerview-v7:$support_libVersion",
             "dynamic_animation": "com.android.support:support-dynamic-animation:$support_libVersion",

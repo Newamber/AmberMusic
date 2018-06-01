@@ -34,13 +34,12 @@ import android.support.v7.widget.RecyclerView
 import android.util.SparseArray
 import android.view.View
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.github.florent37.glidepalette.GlidePalette
 import com.newamber.ambermusic.R
-import toBitmap
 
 /**
  * Description: Base ViewHolder for [RecyclerView].
@@ -63,7 +62,7 @@ class BaseViewHolder(itemView: View?, private val context: Context) :
     }
 
     fun setImage(@IdRes viewId: Int, @DrawableRes drawableId: Int) {
-        Glide.with(context).load(drawableId).preload()
+        //Glide.with(context).load(drawableId).preload()
         Glide.with(context).load(drawableId).into(getSubView(viewId))
     }
 
@@ -72,18 +71,39 @@ class BaseViewHolder(itemView: View?, private val context: Context) :
     }
 
     fun setImage(@IdRes viewId: Int, uri: Uri?) {
-        Glide.with(context).load(uri).preload()
+        //Glide.with(context).load(uri).preload()
         Glide.with(context).load(uri).into(getSubView(viewId))
     }
 
-    fun getBitmap(@IdRes viewId: Int) = getSubView<ImageView>(viewId).toBitmap()
+    fun setThemeColor(@IdRes to: Int, @IdRes bg: Int, uri: Uri?) {
+        //Glide.with(context).load(uri).preload()
+        Glide.with(context)
+            .load(uri)
+            .listener(
+                GlidePalette.with(uri.toString()).intoBackground(getSubView(bg))
+            )
+            .into(getSubView(to))
+    }
+
+    fun setThemeColor(@IdRes to: Int, @IdRes bg: Int, uri: String?) {
+        //Glide.with(context).load(uri).preload()
+        Glide.with(context)
+            .load(uri)
+            .listener(
+                GlidePalette.with(uri).intoBackground(getSubView(bg))
+            )
+            .into(getSubView(to))
+    }
 
     fun setImage(@IdRes viewId: Int, url: String) {
         //Glide.with(context).load(url).preload()
-        val options = RequestOptions()
-            .placeholder(R.drawable.bg_navigation)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-        Glide.with(context).load(url).apply(options).into(getSubView(viewId))
+        Glide.with(context).load(url)
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.bg_navigation)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            )
+            .into(getSubView(viewId))
     }
 
     /**

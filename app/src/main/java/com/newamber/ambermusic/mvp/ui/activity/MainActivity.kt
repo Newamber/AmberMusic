@@ -24,7 +24,6 @@
 
 package com.newamber.ambermusic.mvp.ui.activity
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
@@ -32,9 +31,6 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.PowerManager
-import android.support.design.internal.BottomNavigationItemView
-import android.support.design.internal.BottomNavigationMenuView
-import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TabLayout
 import android.support.design.widget.TabLayout.ViewPagerOnTabSelectedListener
 import android.support.v4.app.ActivityCompat
@@ -57,27 +53,34 @@ import com.newamber.ambermusic.util.*
 import isGone
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 
 /**
  * Created by Newamber on 2018/4/7.
  */
 class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
-    MainContract.View, MediaPlayer.OnPreparedListener {
+    MainContract.View,
+    MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnCompletionListener {
 
     @Inject
     override lateinit var presenter: MainContract.Presenter
     override var enableRxBus = true
 
+    private val timer by lazy { Timer() }
     private val player by lazy { MediaPlayer() }
-
     private lateinit var songList: List<Song>
-    private lateinit var song: Song
+    private var song: Song = SongLoader.getSong(SharePreStorage.getLastPlayedSongId())
+    private var needInitSong = true
 
     //private val playManager by lazy { PlaybackManager(this) }
 
     override fun onDestroy() {
         super.onDestroy()
+        // save last song
+        SharePreStorage.saveLastPlayedSongId(song.id)
+        SharePreStorage.saveLastPlayedProgress(player.currentPosition)
         release()
     }
 
@@ -96,7 +99,9 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
     override fun initView() {
         //playManager.startService()
         //playManager.bindService()
+        SongLoader.getAllSongs().subscribe { songList = it }
         player.setOnPreparedListener(this)
+        player.setOnCompletionListener(this)
         if (aboveMarshmallow()) checkPermission()
 
         // setup Toolbar & DrawerLayout
@@ -109,7 +114,14 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
                 it.setHomeButtonEnabled(true)
             }
             title = getString(string.app_name)
-            with(ActionBarDrawerToggle(this@MainActivity, drawerLayout, this, string.open, string.close)
+            with(
+                ActionBarDrawerToggle(
+                    this@MainActivity,
+                    drawerLayout,
+                    this,
+                    string.open,
+                    string.close
+                )
             ) {
                 syncState()
                 drawerLayout.addDrawerListener(this)
@@ -163,11 +175,16 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
             }
         }
 
-        // setup sliding layout
         setupSlidingLayout()
 
         setupTabLayout()
 
+        // setup last play state
+        val progress = SharePreStorage.getLastPlayedProgress()
+        logDebug(song)
+        logDebug(progress)
+        postSticky("event_init_last_play_state", arrayOf(song, progress))
+        prepare()
     }
 
     // Contract.View method
@@ -192,63 +209,67 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
         }
     }
 
+
+    override fun onPrepared(mp: MediaPlayer?) {
+        if (!needInitSong)
+            mp?.start()
+        else
+            player.seekTo(SharePreStorage.getLastPlayedProgress())
+    }
+
+    override fun onCompletion(mp: MediaPlayer?) = next()
+
     companion object {
         const val REQUEST_STORAGE_CODE = 0
         val storagePermissions = arrayOf(
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
             android.Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-
     }
 
-    // event method
+    // -------------------------------------event method--------------------------------------------
     @Suppress("UNCHECKED_CAST")
     @Receive("event_play_song_main_activity")
-    fun onEventPlaySongFromFragment(list: List<Any>) {
-        song = list[0] as Song
-        songList = list[1] as List<Song>
-        //playManager.initSongList(songList)
-        //playManager.play(song)
-        //successBar(toolbarMain, SongLoader.getSongUri(song.id).toString())
-        prepare(SongLoader.getSongUri(song.id).toString())
+    fun onEventPlaySongFromFragment(array: Array<Any>) {
+        needInitSong = false
+        song = array[0] as Song
+        songList = array[1] as List<Song>
+        prepare()
         post("event_update_ui_playback_fragment", song)
+        updateTime()
     }
 
-    override fun onPrepared(mp: MediaPlayer?) {
-        mp?.start()
+    @Receive("event_update_audio_progress")
+    fun onEventSetSeekBar(progress: Int) {
+        player.seekTo(progress)
     }
 
-//    @Receive("event_play_pre_song_main_activity")
-//    fun onEventPlayPreSong() {
-//        //playManager.previous()
-//    }
-//
-//    @Receive("event_play_next_song_main_activity")
-//    fun onEventPlayNextSong() {
-//        //playManager.next()
-//    }
-//
     @Receive("event_pause_main_activity")
     fun onEventPause() {
+        needInitSong = false
         player.pause()
     }
-//
+
     @Receive("event_play_main_activity")
-    fun onEventPausePlay() {
+    fun onEventPlay() {
+        needInitSong = false
         player.start()
+        updateTime()
     }
 
     @Receive("event_play_next_song_main_activity")
     fun next() {
+        needInitSong = false
         val index = songList.indexOf(song)
         val nextSong = songList[(index + 1) % songList.size]
         song = nextSong
-        prepare(SongLoader.getSongUri(song.id).toString())
+        prepare()
         post("event_update_ui_playback_fragment", song)
     }
 
     @Receive("event_play_pre_song_main_activity")
     fun previous() {
+        needInitSong = false
         val index = songList.indexOf(song)
         val preSong = if (index == 0) {
             songList[songList.size - 1]
@@ -256,15 +277,9 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
             songList[index - 1]
         }
         song = preSong
-        //val preSong = songList[(index - 1) % songList.size]
-        prepare(SongLoader.getSongUri(song.id).toString())
+        prepare()
         post("event_update_ui_playback_fragment", song)
     }
-//
-//    @Receive("event_seek_to_main_activity")
-//    fun onEventSeekTo(progress: Int) {
-//        //playManager.seekTo(progress)
-//    }
 
     // private method
     private fun setupTabLayout() {
@@ -324,35 +339,13 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.containerPlaybackMain, PlaybackMainFragment()).commit()
-
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun disableShiftMode(view: BottomNavigationView) {
-        val menuView = view.getChildAt(0) as BottomNavigationMenuView
-        try {
-            val shiftingMode = menuView.javaClass.getDeclaredField("mShiftingMode")
-            shiftingMode.isAccessible = true
-            shiftingMode.setBoolean(menuView, false)
-            shiftingMode.isAccessible = false
-            for (i in 0 until menuView.childCount) {
-                val item = menuView.getChildAt(i) as BottomNavigationItemView
-                item.setShiftingMode(false)
-                // set once again checked value, so view will be updated
-                item.setChecked(item.itemData.isChecked)
-            }
-        } catch (e: NoSuchFieldException) {
-            logDebug(e)
-        } catch (e: IllegalAccessException) {
-            logDebug(e)
-        }
-
-    }
-
-    private fun prepare(path: String) {
+    private fun prepare() {
+        val path = SongLoader.getSongUri(song.id).toString()
         player.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK)
         try {
-            player.apply {
+            with(player) {
                 reset()
                 if (path.startsWith("content://")) {
                     setDataSource(this@MainActivity, path.toUri())
@@ -372,12 +365,15 @@ class MainActivity : BaseActivity<MainContract.View, MainContract.Presenter>(),
         }
     }
 
-    private fun play() {
-        player.start()
-    }
-
     private fun release() {
         player.stop()
         player.release()
+        timer.cancel()
     }
+
+    private fun updateTime() = timer.scheduleAtFixedRate(object : TimerTask() {
+        override fun run() {
+            post("event_update_progress", player.currentPosition)
+        }
+    }, 0L, 1000L)
 }

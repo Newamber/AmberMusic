@@ -22,7 +22,38 @@
  * SOFTWARE.
  */
 
-package com.newamber.ambermusic.constants
+package com.newamber.ambermusic.util
 
-const val SP_LAST_PLAYED_SONG = "sp_last_played_song"
-const val SP_LAST_PLAYED_PROGRESS = "sp_last_played_progress"
+import java.util.concurrent.TimeUnit
+
+/**
+ * Description: .
+ *
+ * Created by Newamber(newamber@live.cn) on 2018/5/31.
+ */
+fun Int.toMinuteSecond(): String {
+    val times = this.toLong()
+    val res: String
+    if (TimeUnit.MILLISECONDS.toHours(this.toLong()) > 1) {
+        res = String.format(
+            "%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(times),
+            TimeUnit.MILLISECONDS.toMinutes(times) - TimeUnit.HOURS.toMinutes(
+                TimeUnit.MILLISECONDS.toHours(times)
+            ),
+            TimeUnit.MILLISECONDS.toSeconds(times) - TimeUnit.MINUTES.toSeconds(
+                TimeUnit.MILLISECONDS.toMinutes(times)
+            )
+        )
+    } else {
+        res = String.format(
+            "%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(times),
+            TimeUnit.MILLISECONDS.toSeconds(times) - TimeUnit.MINUTES.toSeconds(
+                TimeUnit.MILLISECONDS.toMinutes(times)
+            )
+        )
+    }
+    return res
+}
+

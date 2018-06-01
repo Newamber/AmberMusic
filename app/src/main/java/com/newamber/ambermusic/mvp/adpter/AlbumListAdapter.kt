@@ -50,12 +50,6 @@ class AlbumListAdapter(
             setImage(R.id.imageViewFAlbum, repository.getLocalAlbumArtwork(entity))
             setText(R.id.textViewTitleFAlbum, entity.name)
             setText(R.id.textViewArtistFAlbum, entity.artistName)
-//            Palette.from(getBitmap(R.id.imageViewFAlbum)).generate {
-//                //val color = it.darkVibrantSwatch
-//                it.darkVibrantSwatch?.let {
-//                    setCardColor(R.id.cardViewAlbum, it.rgb)
-//                }
-//            }
         }
     }
 

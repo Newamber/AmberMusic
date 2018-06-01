@@ -87,7 +87,7 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setOnClickListeners(*getOnClickView())
+        setMultiListener()
         lazyInit()
     }
 
@@ -113,7 +113,7 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
 
     protected open fun initData() {}
 
-    protected open fun getOnClickView() = arrayOf<View>()
+    protected open fun setMultiListener() {}
 
     protected open fun processClickEvent(@IdRes viewId: Int) {}
 
@@ -121,6 +121,10 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
 
     protected fun setImage(view: ImageView, uri: Uri) {
         Glide.with(this).load(uri).into(view)
+    }
+
+    protected fun setOnClickListeners(vararg views: View) {
+        views.forEach { it.setOnClickListener(this) }
     }
 
     protected fun setImage(view: ImageView, @DrawableRes resId: Int) {
@@ -136,9 +140,4 @@ abstract class BaseFragment<V : BaseView, P : BasePresenter<V>> : DaggerFragment
             initData()
         }
     }
-
-    private fun setOnClickListeners(vararg views: View) {
-        views.forEach { it.setOnClickListener(this) }
-    }
-
 }

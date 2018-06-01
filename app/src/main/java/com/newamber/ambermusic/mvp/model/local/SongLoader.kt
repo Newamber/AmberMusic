@@ -75,7 +75,7 @@ object SongLoader {
     )
 
     fun getSongUri(songId: Long): Uri = ContentUris
-        .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId.toLong())
+        .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId)
 
     // ---------------------------------------private-----------------------------------------------
     private fun getSongs(cursor: Cursor?): Observable<MutableList<Song>> = Observable.create {
@@ -91,14 +91,25 @@ object SongLoader {
         it.onComplete()
     }
 
-    private fun getSong(cursor: Cursor?): Observable<Song> = Observable.create {
+    fun getFirstSongId(): Long {
         var song = Song.EMPTY_SONG
-        cursor?.apply {
+        makeSongCursor()?.apply {
             if (moveToFirst()) song = getSong(this)
             close()
         }
-        it.onNext(song)
-        it.onComplete()
+        return song.id
+    }
+
+    fun getSong(songId: Long): Song {
+        var song = Song.EMPTY_SONG
+        makeSongCursor(
+            "${AudioColumns._ID} = ?",
+            arrayOf("$songId")
+        )?.apply {
+            if (moveToFirst()) song = getSong(this)
+            close()
+        }
+        return song
     }
 
     private fun getSong(cursor: Cursor) = Song(
